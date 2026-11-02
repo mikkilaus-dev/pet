@@ -96,7 +96,7 @@ final class Brain {
             if Int.random(in: 0..<5) < 2, try await fetch() { return }
             if try await drag() { return }
         }
-        if World.claudeActive { return try await code() }
+        if World.codingAppActive { return try await code() }
         let mouse = NSEvent.mouseLocation
         let near = hypot(mouse.x - c.x, mouse.y - c.y) < 260
         let options: [(Double, () async throws -> Void)] = [
@@ -258,7 +258,7 @@ final class Brain {
         try await c.pause(1.4)
     }
 
-    /// While you use the Claude app, Clawd sits down at his laptop and types along. He gets up when
+    /// While you use the Claude app or another AI coding app, Clawd sits down at his laptop and types along. He gets up when
     /// you switch to another app or Desktop, or after a while, so the loop can check on loans. With the Claude app
     /// installed he plays its official laptop animation; otherwise he draws his own.
     private func code() async throws {
@@ -281,7 +281,7 @@ final class Brain {
             }
             if now() > nextCheck {
                 nextCheck = now() + 0.3
-                if !World.claudeActive { return true }
+                if !World.codingAppActive { return true }
             }
             return now() > end
         }

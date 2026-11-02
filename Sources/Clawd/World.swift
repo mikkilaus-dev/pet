@@ -82,11 +82,28 @@ enum World {
         return CFUUIDCreateString(nil, uuid) as String
     }
 
-    /// Whether the Claude app is the one in use: it is the frontmost app and has a window open on
+    /// Bundle identifiers, or their prefixes, of the Claude app and other AI coding apps,
+    /// so nightly, preview and insiders builds count too.
+    static let codingApps = [
+        "com.anthropic.claudefordesktop",
+        "com.t3tools.",                       // T3 Code
+        "com.todesktop.230313mzl4w4u92",      // Cursor
+        "com.exafunction.windsurf",           // Windsurf
+        "com.microsoft.VSCode",               // VS Code and Insiders
+        "dev.zed.Zed",                        // Zed and Zed Preview
+        "com.openai.codex",                   // Codex
+        "com.conductor.",                     // Conductor
+        "dev.kiro.",                          // Kiro
+        "com.trae.",                          // Trae
+        "com.cmuxterm.",                      // cmux
+        "dev.warp.",                          // Warp
+    ]
+
+    /// Whether an AI coding app is the one in use: it is the frontmost app and has a window open on
     /// the current Desktop, not minimized or hidden.
-    static var claudeActive: Bool {
-        guard let front = NSWorkspace.shared.frontmostApplication,
-              front.bundleIdentifier == "com.anthropic.claudefordesktop" else { return false }
+    static var codingAppActive: Bool {
+        guard let front = NSWorkspace.shared.frontmostApplication, let id = front.bundleIdentifier,
+              codingApps.contains(where: { id.hasPrefix($0) }) else { return false }
         return windows().contains { $0.pid == front.processIdentifier }
     }
 
